@@ -8,6 +8,7 @@
     "jszip": "^3.10.1",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.1",
+    "twilio": "^4.10.0",
     "zip-a-folder": "^1.1.5",
     "zip-folder": "^1.0.0"
   }
